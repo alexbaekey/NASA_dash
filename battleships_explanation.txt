@@ -1,0 +1,5 @@
+The results are intended to be read as follows:
+
+"By the year 2183, The projected mean Sea-Level will reach the Annapolis NOAA station's coastal height." The term "sunk" is intentionally overly simplified.
+
+This answers Julie's homeowner question. But as you can see, there are many qualifiers, some of which can be worked out with better software design, data handling, web-app--programming, etc; others are stepped-around for the sake of complete public-facing accuracy. (For instance, you wouldn't want to say "sunk", as it's not really true, but much easier to understand than "anomaly-free projection of SML from historical data meets coastal height".)
