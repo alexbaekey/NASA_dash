@@ -22,14 +22,13 @@ h_somewhere = 7.0
 
 
 #load up csv from NOAA, not working ...
-#TODO set up S3 for csv, local storage on heroku is difficult?
+#TODO set up S3 for csv,image, local storage on heroku is difficult?
 #url = "http://tidesandcurrents.noaa.gov/sltrends/data/8575512_meantrend.csv"
 #response = requests.post(url,data={'':})
 #df_anna_sea = pd.read_csv(io.StringIO(response.decode('utf-8')))
 
 df_anna_sea = pd.read_csv('8575512_meantrend.csv', index_col=False)
 
-fig = go.Figure() # or any Plotly Express function e.g. px.bar(...)
 fig2 = go.Figure() # or any Plotly Express function e.g. px.bar(...)
 fig3 = go.Figure()
 
@@ -57,19 +56,9 @@ fig3.update_yaxes(title="Historical MSL")
 fig2.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink', range=[0,4],tickvals=[0,1,2,3])
 fig2.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightPink', range=[0,4],tickvals=[0,1,2,3])
 
-fig.update_xaxes(title="Year",range=[1930,3000])
-fig.update_yaxes(title="trend",range=[0,10])
-
 
 df_anna_sea['Year']=df_anna_sea['Year']+df_anna_sea['Month']/12
 
-#fig.add_trace(
-#        go.Scatter(
-#            x=df_anna_sea['Year'],
-#            y=df_anna_sea['Monthly_MSL'],
-#            mode='markers'
-#            )
-#        )
 
 length=len(df_anna_sea['Year'])
 x = df_anna_sea['Year'].values.reshape(length,1)
@@ -77,30 +66,32 @@ y = df_anna_sea['Monthly_MSL'].values.reshape(length,1)
 regr = linear_model.LinearRegression()
 regr.fit(x,y)
 
-    
-# add traces per step
-for step in np.arange(1930, 3000, 50):
-    fig.add_traces(
-        [
-        go.Scatter(
-            x=np.arange(1930, 3000, 50),
-            y=float(regr.coef_)*np.arange(1930, 3000, 50)+float(regr.intercept_),
-        ),
-        go.Scatter(
+ 
+
+#NEW WAY https://community.plotly.com/t/multiple-traces-with-a-single-slider-in-plotly/16356/2
+
+trace_list_1 = []
+trace_list_2 = []
+for step in np.arange(1930,3000,50):
+    temp=go.Scatter(
+        x=np.arange(1930, 3000, 50),
+        y=float(regr.coef_)*np.arange(1930, 3000, 50)+float(regr.intercept_),
+        )                   
+    trace_list_1.append(temp)
+
+for step in np.arange(1930,3000,50):
+    temp2=go.Scatter(
             visible=False,
             line=dict(color="#00CED1", width=3),
-            name="year = " + str(1930+step),
+            name="year = " + str(step),
             x=[step,step],
             y=[0,10]
-        )
-        ]
-    )
+        )                   
+    trace_list_2.append(temp2)
 
 
-
-fig.add_annotation(text="h_annapolis",xref="paper",yref="paper",x=10,y=h_annapolis,showarrow=False)
-
-
+fig = go.Figure(data=trace_list_1+trace_list_2,layout_xaxis_range=[1930,3000],layout_yaxis_range=[0,10]) # or any Plotly Express function e.g. px.bar(...)
+    
     # Update grid
     #    for i in stations:    
     #        if(0.00371*step-7.382<stations['height']):
@@ -116,18 +107,19 @@ fig3.add_trace(
 )
 
 # display inital trace value on timeline
-fig.data[1].visible = True
+#fig.data[0].visible = True
 
 # Create and add slider
+#got 21 from (3030-1930)/50
 steps = []
-for i in range(len(fig.data)):
+for i in range(22):
     print( " THE NUMBER i " + str(i))
     step = dict(
         method="update",
         args=[
-            {"visible": [False] * int(3000-1930/50)},
+            {"visible": [False] * 22},
             #{"visible": [False]*i},
-              {"title": "Projection for year: " + str(1930+i*50)}],  # layout attribute
+              {"title": "Projection for year: " + str(1930+(i+1)*50)}],  # layout attribute
     )
     step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
     steps.append(step)
@@ -137,9 +129,9 @@ for i in range(len(fig.data)):
 #print(type(fig.data))
 
 sliders = [dict(
-    active=1,
+    #active=1,
     currentvalue={"prefix": "Year: "},
-    pad={"t": 50},
+    #pad={"t": 50},
     steps=steps
 )]
 
@@ -157,8 +149,7 @@ fig.update_layout(
             yref='y', y0= h_somewhere, y1=h_somewhere,
             xref='paper', x0=0, x1=1
         )
-    ]
-
+    ],
     )
 
 fig2.update_layout(
