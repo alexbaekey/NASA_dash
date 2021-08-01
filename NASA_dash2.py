@@ -72,6 +72,8 @@ regr.fit(x,y)
 
 trace_list_1 = []
 trace_list_2 = []
+trace_list_3 = []
+
 for step in np.arange(1930,3000,50):
     temp=go.Scatter(
         x=np.arange(1930, 3000, 50),
@@ -89,8 +91,21 @@ for step in np.arange(1930,3000,50):
         )                   
     trace_list_2.append(temp2)
 
+for step in np.arange(1930,3000,50):
+    temp3=go.Scatter(
+        x=[1930,1930],
+        y=[h_annapolis,h_somewhere],
+        mode="markers+text",
+        text=["h_annapolis","h_somewhere"],
+        textposition="top right"
+    )
+    trace_list_3.append(temp3)
 
-fig = go.Figure(data=trace_list_1+trace_list_2,layout_xaxis_range=[1930,3000],layout_yaxis_range=[0,10]) # or any Plotly Express function e.g. px.bar(...)
+fig = go.Figure(
+        data=trace_list_1+trace_list_2+trace_list_3,
+        layout_xaxis_range=[1930,2980],
+        layout_yaxis_range=[0,10],
+        )
     
     # Update grid
     #    for i in stations:    
@@ -107,7 +122,7 @@ fig3.add_trace(
 )
 
 # display inital trace value on timeline
-#fig.data[0].visible = True
+fig.data[1].visible = True
 
 # Create and add slider
 #got 21 from (3030-1930)/50
@@ -124,10 +139,6 @@ for i in range(22):
     step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
     steps.append(step)
 
-#print("fig data\n")
-#print(fig.data)
-#print(type(fig.data))
-
 sliders = [dict(
     #active=1,
     currentvalue={"prefix": "Year: "},
@@ -142,7 +153,8 @@ fig.update_layout(
         dict(
             type='line',
             yref='y', y0= h_annapolis, y1=h_annapolis,
-            xref='paper', x0=0, x1=1
+            xref='paper', x0=0, x1=1,
+
         ),
         dict(
             type='line',
@@ -180,8 +192,6 @@ app.layout = html.Div([
         dcc.Graph(figure=fig)
     ),
     ]
-    #style={'columnCount': 2}
-    #style={'width': '48%','display': 'inline-block'}
 )
 
 app.run_server(debug=True, use_reloader=True)  # Turn off reloader if inside Jupyter
