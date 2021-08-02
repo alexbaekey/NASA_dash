@@ -32,7 +32,7 @@ fig3 = go.Figure()
 
 fig2.add_layout_image(
         dict(    
-            source=url_img,
+            source=img_url,
             xref="x",
             yref="y",
             x=0,
