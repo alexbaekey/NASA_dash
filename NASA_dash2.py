@@ -172,6 +172,7 @@ fig3.update_layout(
     )
 
 app = dash.Dash()
+server=app.server
 app.layout = html.Div([
     html.Div(
         dcc.Graph(figure=fig2),
