@@ -20,24 +20,19 @@ from sklearn import linear_model
 h_annapolis = 3.0
 h_somewhere = 7.0
 
+csv_url = 's3://nasa-dash-blue-marble/8575512_meantrend.csv'
+img_url = 's3://nasa-dash-blue-marble/maryland_coast.jpg'
+# img = Image.open(img_url)
 
-#load up csv from NOAA, not working ...
-#TODO set up S3 for csv,image, local storage on heroku is difficult?
-#url = "http://tidesandcurrents.noaa.gov/sltrends/data/8575512_meantrend.csv"
-#response = requests.post(url,data={'':})
-#df_anna_sea = pd.read_csv(io.StringIO(response.decode('utf-8')))
-
-df_anna_sea = pd.read_csv('8575512_meantrend.csv', index_col=False)
+df_anna_sea = pd.read_csv(csv_url, index_col=False)
 
 fig2 = go.Figure() # or any Plotly Express function e.g. px.bar(...)
 fig3 = go.Figure()
 
 
-img = Image.open("maryland_coast.jpg")
-
 fig2.add_layout_image(
         dict(    
-            source=img,
+            source=url_img,
             xref="x",
             yref="y",
             x=0,
