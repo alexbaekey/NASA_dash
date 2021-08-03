@@ -21,7 +21,10 @@ h_annapolis = 3.0
 h_somewhere = 7.0
 
 csv_url = 's3://nasa-dash-blue-marble/8575512_meantrend.csv'
-img_url = 's3://nasa-dash-blue-marble/maryland_coast.jpg'
+#img_url = 's3://nasa-dash-blue-marble/maryland_coast.jpg'
+img_url = 'https://i.ibb.co/0jTLg38/maryland-coast.jpg'
+# This image link works! Was having so much trouble reading from S3 to image
+# however, website will take down link in a month
 # img = Image.open(img_url)
 
 df_anna_sea = pd.read_csv(csv_url, index_col=False)
@@ -46,7 +49,7 @@ fig2.add_layout_image(
         )
 
 fig3.update_xaxes(title="Year")
-fig3.update_yaxes(title="Historical MSL")
+fig3.update_yaxes(title="MSL")
 
 fig2.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink', range=[0,4],tickvals=[0,1,2,3])
 fig2.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightPink', range=[0,4],tickvals=[0,1,2,3])
@@ -69,37 +72,43 @@ trace_list_1 = []
 trace_list_2 = []
 trace_list_3 = []
 
-for step in np.arange(1930,3000,50):
+for step in np.arange(1930,3000,10):
     temp=go.Scatter(
-        x=np.arange(1930, 3000, 50),
-        y=float(regr.coef_)*np.arange(1930, 3000, 50)+float(regr.intercept_),
+        x=np.arange(1930, 3000, 10),
+        y=float(regr.coef_)*np.arange(1930, 3000, 10)+float(regr.intercept_),
+        line = dict(color='firebrick', width=4),
+        showlegend=False
         )                   
     trace_list_1.append(temp)
 
-for step in np.arange(1930,3000,50):
+for step in np.arange(1930,3000,10):
     temp2=go.Scatter(
             visible=False,
             line=dict(color="#00CED1", width=3),
             name="year = " + str(step),
             x=[step,step],
-            y=[0,10]
+            y=[0,10],
+            showlegend=False
         )                   
     trace_list_2.append(temp2)
 
-for step in np.arange(1930,3000,50):
+for step in np.arange(1930,3000,10):
     temp3=go.Scatter(
         x=[1930,1930],
         y=[h_annapolis,h_somewhere],
         mode="markers+text",
         text=["h_annapolis","h_somewhere"],
-        textposition="top right"
+        textposition="top right",
+        showlegend=False
     )
     trace_list_3.append(temp3)
 
 fig = go.Figure(
         data=trace_list_1+trace_list_2+trace_list_3,
-        layout_xaxis_range=[1930,2980],
+        layout_xaxis_range=[1930,2980], #magic underscores used! Look up if confused
         layout_yaxis_range=[0,10],
+        layout_xaxis_title="Year",
+        layout_yaxis_title="Height (m)",
         )
     
     # Update grid
@@ -112,9 +121,19 @@ fig3.add_trace(
     go.Scatter(
         x=df_anna_sea['Year'],
         y=df_anna_sea['Monthly_MSL'],
-        mode='markers'
+        mode='markers',
+        name="Historical MSL",
     )
 )
+
+fig3.add_trace(
+    go.Scatter(
+        x=df_anna_sea['Year'],
+        y=float(regr.coef_)*df_anna_sea['Year']+float(regr.intercept_),
+        line = dict(color='firebrick', width=4),
+        name = "trendline"
+        )
+    )
 
 # display inital trace value on timeline
 fig.data[1].visible = True
@@ -122,14 +141,13 @@ fig.data[1].visible = True
 # Create and add slider
 #got 21 from (3030-1930)/50
 steps = []
-for i in range(22):
-    print( " THE NUMBER i " + str(i))
+for i in range(107):
     step = dict(
         method="update",
         args=[
-            {"visible": [False] * 22},
+            {"visible": [False] * 107},
             #{"visible": [False]*i},
-              {"title": "Projection for year: " + str(1930+(i+1)*50)}],  # layout attribute
+              {"title": "Projection for year: " + str(1930+(i)*10)}],  # layout attribute
     )
     step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
     steps.append(step)
@@ -138,7 +156,11 @@ sliders = [dict(
     #active=1,
     currentvalue={"prefix": "Year: "},
     #pad={"t": 50},
-    steps=steps
+    steps=steps,
+    tickcolor='white',
+    font=dict(
+        color='white'
+        )
 )]
 
 fig.update_layout(
@@ -160,37 +182,35 @@ fig.update_layout(
     )
 
 fig2.update_layout(
-    width=400,
-    height=400,
-    title= "Battleships"
+    width=500,
+    height=500,
+    title= "Underwater?"
     )
 
 fig3.update_layout(
     width = 600,
-    height = 400,
-    title = "Annapolis trendline"
+    height = 500,
+    title = "Historical MSL data - Annapolis - NOAA"
     )
 
 app = dash.Dash()
 server=app.server
-app.layout = html.Div([
+app.layout = html.Div([ 
     html.Div(
-        dcc.Graph(figure=fig2),
-        style={'width': '48%','display': 'inline-block'}
+        dcc.Graph(figure=fig)
     ),
-
     html.Div(
         dcc.Graph(figure=fig3),
         style={'width': '48%', 'align': 'right', 'display': 'inline-block'}
     ),
-
     html.Div(
-        dcc.Graph(figure=fig)
+        dcc.Graph(figure=fig2),
+        style={'width': '48%','display': 'inline-block'}
     ),
     ]
 )
 if __name__ == '__main__':
-    app.run_server(debug=False, use_reloader=False)  # Turn off reloader if inside Jupyter
+    app.run_server(debug=True, use_reloader=True)  # Turn off reloader if inside Jupyter nb or deploying in Heroku
 
 
 
