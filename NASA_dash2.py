@@ -184,7 +184,7 @@ fig.update_layout(
 fig2.update_layout(
     width=500,
     height=500,
-    title= "Underwater?"
+    title= "Underwater? (in progress)"
     )
 
 fig3.update_layout(
@@ -210,7 +210,7 @@ app.layout = html.Div([
     ]
 )
 if __name__ == '__main__':
-    app.run_server(debug=True, use_reloader=True)  # Turn off reloader if inside Jupyter nb or deploying in Heroku
+    app.run_server(debug=False, use_reloader=False)  # Turn off reloader if inside Jupyter nb or deploying in Heroku
 
 
 
