@@ -49,7 +49,7 @@ fig2.add_layout_image(
         )
 
 fig3.update_xaxes(title="Year")
-fig3.update_yaxes(title="MSL")
+fig3.update_yaxes(title="Mean Sea Level (MSL)")
 
 fig2.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink', range=[0,4],tickvals=[0,1,2,3])
 fig2.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightPink', range=[0,4],tickvals=[0,1,2,3])
@@ -64,13 +64,26 @@ y = df_anna_sea['Monthly_MSL'].values.reshape(length,1)
 regr = linear_model.LinearRegression()
 regr.fit(x,y)
 
- 
+#for trace #4 in fig (fill area)
+#TODO replace random values with some sort of anomaly range, ...or something
+
+x_fill = np.arange(1930,3000,10) 
+y_up   = np.zeros(len(x_fill))
+y_low  = np.zeros(len(x_fill))
+
+for ind, i in enumerate(x_fill):
+    y_up[ind]   = float(regr.coef_)*i+float(regr.intercept_)+(2*np.random.sample())
+    y_low[ind]  = float(regr.coef_)*i+float(regr.intercept_)-(2*np.random.sample())
+
+
 
 #NEW WAY https://community.plotly.com/t/multiple-traces-with-a-single-slider-in-plotly/16356/2
 
 trace_list_1 = []
 trace_list_2 = []
 trace_list_3 = []
+trace_list_4 = []
+trace_list_5 = []
 
 for step in np.arange(1930,3000,10):
     temp=go.Scatter(
@@ -103,8 +116,34 @@ for step in np.arange(1930,3000,10):
     )
     trace_list_3.append(temp3)
 
+for step in np.arange(1930,3000,10):
+    temp4=go.Scatter(
+        x=x_fill,
+        y=y_low,
+        mode='lines',
+        marker=dict(color="#444"),
+        line=dict(width=0),
+        hoverinfo="skip",
+        showlegend=False
+    )
+    trace_list_4.append(temp4)
+
+for step in np.arange(1930,3000,10):
+    temp5=go.Scatter(
+        x=x_fill,
+        y=y_up,
+        marker=dict(color="#444"),
+        mode='lines',
+        fill='tonexty',
+        fillcolor='rgba(68,68,68,0.3)',
+        line=dict(width=0),
+        hoverinfo="skip",
+        showlegend=False
+    )
+    trace_list_5.append(temp5)
+
 fig = go.Figure(
-        data=trace_list_1+trace_list_2+trace_list_3,
+        data=trace_list_1+trace_list_2+trace_list_3+trace_list_4+trace_list_5,
         layout_xaxis_range=[1930,2980], #magic underscores used! Look up if confused
         layout_yaxis_range=[0,10],
         layout_xaxis_title="Year",
