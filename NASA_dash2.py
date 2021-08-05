@@ -318,7 +318,7 @@ app.layout = html.Div(children=[
     ], style={'backgroundColor':'black'}
 )
 if __name__ == '__main__':
-    app.run_server(debug=True, use_reloader=True)  # Turn off reloader if inside Jupyter nb or deploying in Heroku
+    app.run_server(debug=False, use_reloader=False)  # Turn off reloader if inside Jupyter nb or deploying in Heroku
 
 
 
