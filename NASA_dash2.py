@@ -37,9 +37,9 @@ y_2 = np.random.randn(120)-0.4
 
 fig5 = go.Figure()
 
-fig5.add_trace(go.Box(y=y_0))
-fig5.add_trace(go.Box(y=y_1))
-fig5.add_trace(go.Box(y=y_2))
+fig5.add_trace(go.Box(y=y_0,showlegend=False))
+fig5.add_trace(go.Box(y=y_1,showlegend=False))
+fig5.add_trace(go.Box(y=y_2,showlegend=False))
 
 #maybe this next? https://plotly.com/python/scattermapbox/
 
@@ -173,6 +173,7 @@ fig3.add_trace(
         y=df_anna_sea['Monthly_MSL'],
         mode='markers',
         name="Historical MSL",
+        showlegend=False
     )
 )
 
@@ -181,7 +182,8 @@ fig3.add_trace(
         x=df_anna_sea['Year'],
         y=float(regr.coef_)*df_anna_sea['Year']+float(regr.intercept_),
         line = dict(color='firebrick', width=4),
-        name = "trendline"
+        name = "trendline",
+        showlegend=False
         )
     )
 
@@ -238,7 +240,7 @@ fig.update_layout(
     )
 
 fig2.update_layout(
-    width=500,
+    width=400,
     height=400,
     title= "Baltimore demographics",
     paper_bgcolor='rgb(0,0,0)',
@@ -247,8 +249,8 @@ fig2.update_layout(
     )
 
 fig3.update_layout(
-    width = 500,
-    height = 500,
+    width = 400,
+    height = 400,
     title = "Historical MSL data - Baltimore - NOAA",
     paper_bgcolor='rgb(0,0,0)',
     font_color='white',
@@ -256,8 +258,8 @@ fig3.update_layout(
     )
 
 fig4.update_layout(
-    width = 500,
-    height = 500,
+    width = 400,
+    height = 400,
     title = "Bar Charts!",
     paper_bgcolor='rgb(0,0,0)',
     font_color='white',
@@ -265,8 +267,8 @@ fig4.update_layout(
     )
 
 fig5.update_layout(
-    width = 500,
-    height = 500,
+    width = 400,
+    height = 400,
     title = "Box Plots!",
     paper_bgcolor='rgb(0,0,0)',
     font_color='white',
@@ -277,11 +279,10 @@ fig5.update_layout(
 
 
 
-
-
 #app layout stuff
 img2_url = 'https://i.ibb.co/12p7vTF/bluemarbleheader.png' 
 
+img3_url = 'https://i.ibb.co/DgTTKCs/fake-sidebar.png'
 
 app = dash.Dash()
 server=app.server
@@ -296,26 +297,45 @@ app.layout = html.Div(children=[
         style={'width':'100%'}
     ),
     #divide up into two big divs, sidebar on left, graphs on right?
-    html.Div(
-        dcc.Graph(figure=fig),
+    html.Img(
+        src=img3_url,
+        style={'width':'13%','align':'left','display':'inline-block'}
     ),
     html.Div(
-        dcc.Graph(figure=fig3),
-        style={'width': '48%', 'align': 'right', 'display': 'inline-block'}
+        children=[
+            html.H1(
+                'Regional Decision Support - Baltimore, MD',
+                style={'color':'white','text-align':'center'}
+            ),
+            html.Div(
+                dcc.Graph(figure=fig),
+            )
+        ],
+        style={'width':'40%','vertical-align':'top','display':'inline-block'}
     ),
     html.Div(
-        dcc.Graph(figure=fig2),
-        style={'width': '48%','display': 'inline-block','backgroundColor':'black'}
-    ),
-    html.Div(
-        dcc.Graph(figure=fig4),
-        style={'width': '48%','display': 'inline-block','backgroundColor':'black'}
-    ),
-    html.Div(
-        dcc.Graph(figure=fig5),
-        style={'width': '48%','display': 'inline-block','backgroundColor':'black', 'align':'right'}
-    ),
-    ], style={'backgroundColor':'black'}
+        children=[
+        html.Div(
+            dcc.Graph(figure=fig3),
+            style={'width': '48%', 'vertical-align':'top','align': 'right', 'display': 'inline-block'}
+        ),
+        html.Div(
+            dcc.Graph(figure=fig2),
+            style={'width': '48%','display': 'inline-block','backgroundColor':'black'}
+        ),
+        html.Div(
+            dcc.Graph(figure=fig4),
+            style={'width': '48%','display': 'inline-block','backgroundColor':'black'}
+        ),
+        html.Div(
+            dcc.Graph(figure=fig5),
+            style={'width': '48%','display': 'inline-block','backgroundColor':'black', 'align':'right'}
+        )
+        ],
+        style={'width':'45%','display':'inline-block','align':'right'}
+    )
+    ], 
+    style={'backgroundColor':'black'}
 )
 if __name__ == '__main__':
     app.run_server(debug=False, use_reloader=False)  # Turn off reloader if inside Jupyter nb or deploying in Heroku
