@@ -10,10 +10,9 @@ import requests
 import io
 from sklearn import linear_model
 
-#TODO black background, white text, ariel
+#TODO
 #Make into more of "Regional what-if analysis tool" with dropdowns for scenarios
 #Clean!!
-# layout including sidebar and central plots, side plots on right
 
 # coastal heights
 h_baltimore = 3.0
@@ -62,8 +61,8 @@ fig2.add_layout_image(
 fig3.update_xaxes(title="Year")
 fig3.update_yaxes(title="Mean Sea Level (MSL)")
 
-fig2.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink', range=[0,6],tickvals=[0,1,2,3,4,5])
-fig2.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightPink', range=[0,4],tickvals=[0,1,2,3])
+fig2.update_xaxes(showgrid=False, gridwidth=1, gridcolor='LightPink', range=[0,6],tickvals=[0,1,2,3,4,5])
+fig2.update_yaxes(showgrid=False, gridwidth=1, gridcolor='LightPink', range=[0,4],tickvals=[0,1,2,3])
 
 
 df_anna_sea['Year']=df_anna_sea['Year']+df_anna_sea['Month']/12
@@ -240,8 +239,8 @@ fig.update_layout(
     )
 
 fig2.update_layout(
-    width=400,
-    height=400,
+    #width=300,
+    height=500,
     title= "Baltimore demographics",
     paper_bgcolor='rgb(0,0,0)',
     font_color='white',
@@ -249,7 +248,7 @@ fig2.update_layout(
     )
 
 fig3.update_layout(
-    width = 400,
+    #width = 300,
     height = 400,
     title = "Historical MSL data - Baltimore - NOAA",
     paper_bgcolor='rgb(0,0,0)',
@@ -258,8 +257,8 @@ fig3.update_layout(
     )
 
 fig4.update_layout(
-    width = 400,
-    height = 400,
+    #width = 300,
+    height = 300,
     title = "Bar Charts!",
     paper_bgcolor='rgb(0,0,0)',
     font_color='white',
@@ -267,8 +266,8 @@ fig4.update_layout(
     )
 
 fig5.update_layout(
-    width = 400,
-    height = 400,
+    #width = 300,
+    height = 300,
     title = "Box Plots!",
     paper_bgcolor='rgb(0,0,0)',
     font_color='white',
@@ -281,20 +280,15 @@ fig5.update_layout(
 
 #app layout stuff
 img2_url = 'https://i.ibb.co/12p7vTF/bluemarbleheader.png' 
-
 img3_url = 'https://i.ibb.co/DgTTKCs/fake-sidebar.png'
+img4_url = 'https://i.ibb.co/Ytsvqj3/bluemarble-logo.png' 
 
 app = dash.Dash()
 server=app.server
 app.layout = html.Div(children=[ 
-    html.Div(
-        '''
-        An example of a climate dashboard
-        '''
-    ),
     html.Img(
         src=img2_url,
-        style={'width':'100%'}
+        style={'width':'100%','margin-bottom':'40px'}
     ),
     #divide up into two big divs, sidebar on left, graphs on right?
     html.Img(
@@ -305,35 +299,81 @@ app.layout = html.Div(children=[
         children=[
             html.H1(
                 'Regional Decision Support - Baltimore, MD',
-                style={'color':'white','text-align':'center'}
+                style={ 'color':'white',
+                        'text-align':'center',
+                        'font_family':'ariel'}
             ),
             html.Div(
                 dcc.Graph(figure=fig),
             )
         ],
-        style={'width':'40%','vertical-align':'top','display':'inline-block'}
+        style={ 'width':'50%',
+                'vertical-align':'top',
+                'display':'inline-block',
+                'margin-bottom':'30px',
+            }
     ),
     html.Div(
-        children=[
+        children=[   
+        html.H2(
+            'For demostration purposes only, some data taken from NOAA, some randomized.',
+            style={ 'width':'45%',
+                    'color':'white',
+                    'align':'left',
+                    'display':'inline-block',
+                    'font_family':'ariel',
+                    'font-size':'15px',
+                    'padding-left':'10px',
+                    'padding-right':'10px'}
+        ),
+        html.Img(
+            src=img4_url,
+            style={'width':'50%',
+            'margin-bottom':'15px',
+            'vertical-align':'top',
+            'align':'right',
+            'display':'inline-block'
+            }
+        ), 
+        html.Img(
+            src=img_url,
+            style={'width':'93%',
+            'padding-left':'20px',
+            'padding-right':'20px'
+            }
+        ),
+#        html.Div(
+#            dcc.Graph(figure=fig2),
+#            style={
+#                'width':'98%',
+#            }
+#        ),
         html.Div(
             dcc.Graph(figure=fig3),
-            style={'width': '48%', 'vertical-align':'top','align': 'right', 'display': 'inline-block'}
-        ),
-        html.Div(
-            dcc.Graph(figure=fig2),
-            style={'width': '48%','display': 'inline-block','backgroundColor':'black'}
-        ),
-        html.Div(
-            dcc.Graph(figure=fig4),
-            style={'width': '48%','display': 'inline-block','backgroundColor':'black'}
-        ),
-        html.Div(
-            dcc.Graph(figure=fig5),
-            style={'width': '48%','display': 'inline-block','backgroundColor':'black', 'align':'right'}
-        )
+            style={
+                'width':'98%'}
+            ),
+        html.Div(children=[
+            html.Div(
+                dcc.Graph(figure=fig4),
+                style={'width': '48%','display':'inline-block','align':'left'}
+            ),
+            html.Div(
+                dcc.Graph(figure=fig5),
+                style={'width': '48%','display':'inline-block','align':'right'}
+            )
+            ],
+            style={
+                'width':'98%'
+            }
+        )    
         ],
-        style={'width':'45%','display':'inline-block','align':'right'}
-    )
+        style={ 'width':'35%',
+                'vertical-align':'top',
+                'align':'right',
+                'display':'inline-block',
+                'border':'3px solid white'}
+        )
     ], 
     style={'backgroundColor':'black'}
 )
