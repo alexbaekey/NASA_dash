@@ -219,7 +219,7 @@ sliders = [dict(
 
 fig.update_layout(
     sliders=sliders,
-    title = "Sea-Level Prediciton in Maryland",
+    title = "Sea-Level Prediciton in Baltimore, Maryland",
     paper_bgcolor='rgb(0,0,0)',
     font_color='white',
     font_family='ariel',
@@ -282,6 +282,7 @@ fig5.update_layout(
 img2_url = 'https://i.ibb.co/12p7vTF/bluemarbleheader.png' 
 img3_url = 'https://i.ibb.co/DgTTKCs/fake-sidebar.png'
 img4_url = 'https://i.ibb.co/Ytsvqj3/bluemarble-logo.png' 
+img5_url = 'https://www.climate.gov/sites/default/files/sealevel_contributors_graph_SOTC2018_620.jpg'
 
 app = dash.Dash()
 server=app.server
@@ -303,6 +304,33 @@ app.layout = html.Div(children=[
                         'text-align':'center',
                         'font_family':'ariel'}
             ),
+#            html.Div(
+#                'Climate Information...',
+#                style={
+#                    'color':'white',
+#                    'align':'left',
+#                    'display':'inline-block',
+#                    'font_family':'ariel',
+#                    'font-size':'20px',
+#                    'padding-left':'10px',
+#                    'padding-right':'10px'}
+#            ),
+            html.Div(
+                'Demographics Map',
+                style={
+                    'font_color':'white',
+                    'font_family':'ariel',
+                }
+            ),
+            html.Img(
+                src=img_url,
+                title='Demographics map',
+                style={
+                    #TODO  Why can't I center this image??
+                    'padding-left':'100px',
+                    'padding-right':'100px',
+                    }
+            ), 
             html.Div(
                 dcc.Graph(figure=fig),
             )
@@ -316,7 +344,7 @@ app.layout = html.Div(children=[
     html.Div(
         children=[   
         html.H2(
-            'For demostration purposes only, some data taken from NOAA, some randomized.',
+            'For demostration purposes only... Some data taken from NOAA, some randomized.',
             style={ 'width':'45%',
                     'color':'white',
                     'align':'left',
@@ -336,7 +364,7 @@ app.layout = html.Div(children=[
             }
         ), 
         html.Img(
-            src=img_url,
+            src=img5_url,
             style={'width':'93%',
             'padding-left':'20px',
             'padding-right':'20px'
